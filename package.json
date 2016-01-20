@@ -15,5 +15,14 @@
     "test": "tap test/*.js --cov"
   },
   "author": "Isaac Z. Schlueter <i@izs.me> (http://blog.izs.me/)",
-  "license": "ISC"
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/isaacs/isexe.git"
+  },
+  "keywords": [],
+  "bugs": {
+    "url": "https://github.com/isaacs/isexe/issues"
+  },
+  "homepage": "https://github.com/isaacs/isexe#readme"
 }
