@@ -23,7 +23,7 @@ function isexe (path, options, cb) {
     }
 
     return new Promise(function (resolve, reject) {
-      isexe(path, options, function (er, is) {
+      isexe(path, options || {}, function (er, is) {
         if (er) {
           reject(er)
         } else {
@@ -33,7 +33,7 @@ function isexe (path, options, cb) {
     })
   }
 
-  core(path, function (er, is) {
+  core(path, options || {}, function (er, is) {
     // ignore EACCES because that just means we aren't allowed to run it
     if (er) {
       if (er.code === 'EACCES' || options && options.ignoreErrors) {
@@ -48,7 +48,7 @@ function isexe (path, options, cb) {
 function sync (path, options) {
   // my kingdom for a filtered catch
   try {
-    return core.sync(path)
+    return core.sync(path, options || {})
   } catch (er) {
     if (options && options.ignoreErrors || er.code === 'EACCES') {
       return false
