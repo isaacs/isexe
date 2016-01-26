@@ -1,6 +1,6 @@
 {
   "name": "isexe",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Minimal module to check if a file is executable.",
   "main": "index.js",
   "directories": {
