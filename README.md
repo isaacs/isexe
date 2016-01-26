@@ -40,3 +40,12 @@ unless `options.ignoreErrors` is set to true.
 ### `isexe.sync(path, [options])`
 
 Same as `isexe` but returns the value and throws any errors raised.
+
+### Options
+
+* `ignoreErrors` Treat all errors as "no, this is not executable", but
+  don't raise them.
+* `uid` Number to use as the user id when using the `mode` approach.
+* `gid` Number to use as the group id when using the `mode` approach.
+* `pathExt` List of path extensions to use instead of `PATHEXT`
+  environment variable on Windows.
