@@ -9,7 +9,7 @@
   "devDependencies": {
     "mkdirp": "^0.5.1",
     "rimraf": "^2.5.0",
-    "tap": "^5.1.2"
+    "tap": "^7.1.0"
   },
   "scripts": {
     "test": "tap test/*.js --branches=100 --statements=100 --functions=100 --lines=100"
