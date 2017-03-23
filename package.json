@@ -9,10 +9,10 @@
   "devDependencies": {
     "mkdirp": "^0.5.1",
     "rimraf": "^2.5.0",
-    "tap": "^5.1.2"
+    "tap": "^10.3.0"
   },
   "scripts": {
-    "test": "tap test/*.js --branches=100 --statements=100 --functions=100 --lines=100"
+    "test": "tap test/*.js --100"
   },
   "author": "Isaac Z. Schlueter <i@izs.me> (http://blog.izs.me/)",
   "license": "ISC",
