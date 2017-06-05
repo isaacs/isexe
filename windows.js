@@ -32,11 +32,18 @@ function checkStat (stat, path, options) {
 }
 
 function isexe (path, options, cb) {
-  fs.stat(path, function (er, stat) {
-    cb(er, er ? false : checkStat(stat, path, options))
+  fs.exists(path, function (exists) {
+    if (exists) {
+      fs.stat(path, function (er, stat) {
+          cb(er, er ? false : checkStat(stat, path, options))
+        })
+    } else {
+      cb( null, false );
+    }
   })
 }
 
 function sync (path, options) {
-  return checkStat(fs.statSync(path), path, options)
+  return fs.existsSync(path) && 
+    checkStat(fs.statSync(path), path, options)
 }
