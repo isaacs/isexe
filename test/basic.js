@@ -38,7 +38,7 @@ t.test('setup fixtures', function (t) {
 
 t.test('promise', { skip: promiseSkip }, function (t) {
   var isexe = reset()
-  t.test('meow async', function (t) {
+  t.test('meow async', { skip: winSkip }, function (t) {
     isexe(meow).then(function (is) {
       t.ok(is)
       t.end()
