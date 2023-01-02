@@ -3,6 +3,7 @@
   "version": "2.0.0",
   "description": "Minimal module to check if a file is executable.",
   "main": "index.js",
+  "browser": { "fs": false}
   "directories": {
     "test": "test"
   },
