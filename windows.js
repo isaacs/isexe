@@ -32,9 +32,13 @@ function checkStat (stat, path, options) {
 }
 
 function isexe (path, options, cb) {
-  fs.stat(path, function (er, stat) {
-    cb(er, er ? false : checkStat(stat, path, options))
-  })
+  try {
+    fs.stat(path, function (er, stat) {
+      cb(er, er ? false : checkStat(stat, path, options))
+    })
+  } catch (er) {
+    cb(er, false);
+  }
 }
 
 function sync (path, options) {

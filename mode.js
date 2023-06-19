@@ -4,9 +4,13 @@ isexe.sync = sync
 var fs = require('fs')
 
 function isexe (path, options, cb) {
-  fs.stat(path, function (er, stat) {
-    cb(er, er ? false : checkStat(stat, options))
-  })
+  try {
+    fs.stat(path, function (er, stat) {
+      cb(er, er ? false : checkStat(stat, options))
+    })
+  } catch (er) {
+    cb(er, false);
+  }
 }
 
 function sync (path, options) {

@@ -7,6 +7,7 @@ var mine = fixture + '/mine.cat'
 var ours = fixture + '/ours.cat'
 var fail = fixture + '/fail.false'
 var noent = fixture + '/enoent.exe'
+var invalid = 5;
 var mkdirp = require('mkdirp')
 var rimraf = require('rimraf')
 
@@ -58,6 +59,18 @@ t.test('promise', { skip: promiseSkip }, function (t) {
   })
   t.test('noent ignore async', function (t) {
     isexe(noent, { ignoreErrors: true }).then(function (is) {
+      t.notOk(is)
+      t.end()
+    })
+  })
+  t.test('invalid async', function (t) {
+    isexe(invalid).catch(function (er) {
+      t.ok(er)
+      t.end()
+    })
+  })
+  t.test('invalid ignore async', function (t) {
+    isexe(invalid, { ignoreErrors: true }).then(function (is) {
       t.notOk(is)
       t.end()
     })
@@ -125,6 +138,7 @@ function runTest (t, options) {
     t.notOk(isexe.sync(fail, options))
   }
   t.notOk(isexe.sync(noent, optionsIgnore))
+  t.notOk(isexe.sync(invalid, optionsIgnore))
   if (!options) {
     t.ok(isexe.sync(meow))
   } else {
@@ -135,6 +149,9 @@ function runTest (t, options) {
   t.ok(isexe.sync(ours, options))
   t.throws(function () {
     isexe.sync(noent, options)
+  })
+  t.throws(function () {
+    isexe.sync(invalid, options)
   })
 
   t.test('meow async', function (t) {
@@ -199,6 +216,24 @@ function runTest (t, options) {
 
   t.test('noent ignore async', function (t) {
     isexe(noent, optionsIgnore, function (er, is) {
+      if (er) {
+        throw er
+      }
+      t.notOk(is)
+      t.end()
+    })
+  })
+
+  t.test('invalid async', function (t) {
+    isexe(invalid, options, function (er, is) {
+      t.ok(er)
+      t.notOk(is)
+      t.end()
+    })
+  })
+
+  t.test('invalid ignore async', function (t) {
+    isexe(invalid, optionsIgnore, function (er, is) {
       if (er) {
         throw er
       }

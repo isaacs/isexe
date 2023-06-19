@@ -1,4 +1,3 @@
-var fs = require('fs')
 var core
 if (process.platform === 'win32' || global.TESTING_WINDOWS) {
   core = require('./windows.js')
