@@ -21,6 +21,13 @@ export interface IsexeOptions {
   gid?: number
 
   /**
+   * effective group ID list to use when checking executable mode flags
+   * on posix
+   * Defaults to process.getgroups()
+   */
+  groups?: number[]
+
+  /**
    * The ;-delimited path extension list for win32 implementation.
    * Defaults to process.env.PATHEXT
    */

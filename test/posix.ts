@@ -1,7 +1,7 @@
 import t from 'tap'
 
 import { createFixtures } from './fixtures/index'
-const { meow, fail, mine, ours, enoent, modes } = createFixtures(t)
+const { meow, fail, mine, ours, others, enoent, modes } = createFixtures(t)
 
 const isWindows = process.platform === 'win32'
 
@@ -13,20 +13,21 @@ import * as fsPromises from 'fs/promises'
 // uid/gid comparisons
 const mockStat = (path: string, st: Stats) =>
   Object.assign(st, {
-    uid: 123,
-    gid: 321,
+    uid: path === others || path === ours ? 987 : 123,
+    gid: path === others ? 987 : 321,
     mode: !modes[path] ? st.mode : setMode(st.mode, modes[path]),
   })
 
 const setMode = (orig: number, mode: number) => (orig & 0o7777000) | mode
 
-const { getuid, getgid } = process
+const { getuid, getgid, getgroups } = process
 t.teardown(() => {
-  Object.assign(process, { getuid, getgid })
+  Object.assign(process, { getuid, getgid, getgroups })
 })
 Object.assign(process, {
   getuid: () => 123,
   getgid: () => 321,
+  getgroups: () => [321, 987],
 })
 
 const { isexe, sync } = t.mock('../dist/cjs/posix.js', {
@@ -44,11 +45,13 @@ const { isexe, sync } = t.mock('../dist/cjs/posix.js', {
 t.test('basic tests', async t => {
   t.equal(await isexe(meow), true)
   t.equal(await isexe(ours), true)
+  t.equal(await isexe(others), true)
   t.equal(await isexe(mine), true)
   t.equal(await isexe(fail), false)
 
   t.equal(sync(meow), true)
   t.equal(sync(ours), true)
+  t.equal(sync(others), true)
   t.equal(sync(mine), true)
   t.equal(sync(fail), false)
 
@@ -60,51 +63,75 @@ t.test('basic tests', async t => {
 
 t.test('override uid/gid', async t => {
   t.test('same uid, different gid', async t => {
-    const o = { gid: 654 }
-    t.equal(await isexe(meow), true)
-    t.equal(await isexe(ours), true)
-    t.equal(await isexe(mine), true)
-    t.equal(await isexe(fail), false)
-    t.equal(sync(meow), true)
-    t.equal(sync(ours), true)
-    t.equal(sync(mine), true)
-    t.equal(sync(fail), false)
+    const o = { gid: 654, groups: [] }
+    t.equal(await isexe(meow, o), true)
+    t.equal(await isexe(ours, o), false)
+    t.equal(await isexe(others, o), false)
+    t.equal(await isexe(mine, o), true)
+    t.equal(await isexe(fail, o), false)
+    t.equal(sync(meow, o), true)
+    t.equal(sync(ours, o), false)
+    t.equal(sync(others, o), false)
+    t.equal(sync(mine, o), true)
+    t.equal(sync(fail, o), false)
   })
 
   t.test('different uid, same gid', async t => {
     const o = { uid: 456 }
     t.equal(await isexe(meow, o), true)
     t.equal(await isexe(ours, o), true)
+    t.equal(await isexe(others, o), true)
     t.equal(await isexe(mine, o), false)
     t.equal(await isexe(fail, o), false)
     t.equal(sync(meow, o), true)
     t.equal(sync(ours, o), true)
+    t.equal(sync(others, o), true)
     t.equal(sync(mine, o), false)
     t.equal(sync(fail, o), false)
   })
 
   t.test('different uid, different gid', async t => {
-    const o = { uid: 456, gid: 654 }
+    const o = { uid: 456, gid: 654, groups: [] }
     t.equal(await isexe(meow, o), true)
     t.equal(await isexe(ours, o), false)
+    t.equal(await isexe(others, o), false)
     t.equal(await isexe(mine, o), false)
     t.equal(await isexe(fail, o), false)
     t.equal(sync(meow, o), true)
     t.equal(sync(ours, o), false)
+    t.equal(sync(others, o), false)
     t.equal(sync(mine, o), false)
+    t.equal(sync(fail, o), false)
+  })
+
+  t.test('root can run anything runnable', async t => {
+    const o = { uid: 0, gid: 999, groups: [] }
+    t.equal(await isexe(meow, o), true)
+    t.equal(await isexe(ours, o), true)
+    t.equal(await isexe(others, o), true)
+    t.equal(await isexe(mine, o), true)
+    t.equal(await isexe(fail, o), false)
+    t.equal(sync(meow, o), true)
+    t.equal(sync(ours, o), true)
+    t.equal(sync(others, o), true)
+    t.equal(sync(mine, o), true)
     t.equal(sync(fail, o), false)
   })
 })
 
 t.test('getuid/getgid required', async t => {
-  const { getuid, getgid } = process
-  t.teardown(() => { Object.assign(process, { getuid, getgid })})
+  const { getuid, getgid, getgroups } = process
+  t.teardown(() => { Object.assign(process, { getuid, getgid, getgroups })})
   process.getuid = undefined
   process.getgid = undefined
+  process.getgroups = undefined
   t.throws(() => sync(meow), {
     message: 'cannot get uid or gid'
   })
   t.rejects(isexe(meow), {
     message: 'cannot get uid or gid'
   })
+  // fine as long as a group/user is specified though
+  t.equal(sync(meow, { uid: 999, groups: [321] }), true)
+  t.equal(await isexe(meow, { uid: 999, groups: [321] }), true)
 })
