@@ -6,7 +6,8 @@
   "module": "./dist/mjs/index.js",
   "types": "./dist/cjs/index.js",
   "files": [
-    "dist"
+    "dist",
+    "src"
   ],
   "exports": {
     ".": {
