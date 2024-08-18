@@ -45,7 +45,6 @@
     "@types/node": "^20.4.5",
     "@types/tap": "^15.0.8",
     "c8": "^8.0.1",
-    "mkdirp": "^0.5.1",
     "prettier": "^2.8.8",
     "rimraf": "^2.5.0",
     "sync-content": "^1.0.2",
