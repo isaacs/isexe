@@ -5,8 +5,8 @@
  * @module
  */
 
-import { Stats, statSync } from 'fs'
-import { stat } from 'fs/promises'
+import { accessSync, constants } from 'fs'
+import { access } from 'fs/promises'
 import { IsexeOptions } from './options'
 
 /**
@@ -19,10 +19,11 @@ export const isexe = async (
 ): Promise<boolean> => {
   const { ignoreErrors = false } = options
   try {
-    return checkStat(await stat(path), path, options)
+    await access(path, constants.F_OK)
+    return checkPathExt(path, options)
   } catch (e) {
     const er = e as NodeJS.ErrnoException
-    if (ignoreErrors || er.code === 'EACCES') return false
+    if (ignoreErrors || er.code === 'EACCES' || er.code === 'ENOENT') return false
     throw er
   }
 }
@@ -37,10 +38,11 @@ export const sync = (
 ): boolean => {
   const { ignoreErrors = false } = options
   try {
-    return checkStat(statSync(path), path, options)
+    accessSync(path, constants.F_OK)
+    return checkPathExt(path, options)
   } catch (e) {
     const er = e as NodeJS.ErrnoException
-    if (ignoreErrors || er.code === 'EACCES') return false
+    if (ignoreErrors || er.code === 'EACCES' || er.code === 'ENOENT') return false
     throw er
   }
 }
@@ -62,6 +64,3 @@ const checkPathExt = (path: string, options: IsexeOptions) => {
   }
   return false
 }
-
-const checkStat = (stat: Stats, path: string, options: IsexeOptions) =>
-  stat.isFile() && checkPathExt(path, options)
