@@ -67,7 +67,7 @@
     "typedoc": "typedoc --tsconfig tsconfig/esm.json ./src/*.ts"
   },
   "author": "Isaac Z. Schlueter <i@izs.me> (http://blog.izs.me/)",
-  "license": "ISC",
+  "license": "BlueOak-1.0.0",
   "tap": {
     "coverage": false,
     "node-arg": [
@@ -91,6 +91,6 @@
   },
   "repository": "https://github.com/isaacs/isexe",
   "engines": {
-    "node": ">=16"
+    "node": ">=20"
   }
 }
