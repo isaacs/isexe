@@ -1,9 +1,7 @@
 import t from 'tap'
 
-import { createFixtures } from './fixtures/index'
+import { createFixtures } from './fixtures/index.js'
 const { meow, fail, mine, ours, others, enoent, modes } = createFixtures(t)
-
-const isWindows = process.platform === 'win32'
 
 import type { Stats } from 'fs'
 import * as fs from 'fs'
@@ -30,7 +28,9 @@ Object.assign(process, {
   getgroups: () => [321, 987],
 })
 
-const { isexe, sync } = t.mock('../dist/cjs/posix.js', {
+const { isexe, sync } = await t.mockImport<
+  typeof import('../dist/esm/posix.js')
+>('../dist/esm/posix.js', {
   fs: {
     ...fs,
     statSync: (path: string) => mockStat(path, fs.statSync(path)),
@@ -40,7 +40,7 @@ const { isexe, sync } = t.mock('../dist/cjs/posix.js', {
     stat: async (path: string) =>
       mockStat(path, await fsPromises.stat(path)),
   },
-}) as typeof import('../dist/cjs/posix.js')
+})
 
 t.test('basic tests', async t => {
   t.equal(await isexe(meow), true)
@@ -121,15 +121,17 @@ t.test('override uid/gid', async t => {
 
 t.test('getuid/getgid required', async t => {
   const { getuid, getgid, getgroups } = process
-  t.teardown(() => { Object.assign(process, { getuid, getgid, getgroups })})
+  t.teardown(() => {
+    Object.assign(process, { getuid, getgid, getgroups })
+  })
   process.getuid = undefined
   process.getgid = undefined
   process.getgroups = undefined
   t.throws(() => sync(meow), {
-    message: 'cannot get uid or gid'
+    message: 'cannot get uid or gid',
   })
   t.rejects(isexe(meow), {
-    message: 'cannot get uid or gid'
+    message: 'cannot get uid or gid',
   })
   // fine as long as a group/user is specified though
   t.equal(sync(meow, { uid: 999, groups: [321] }), true)

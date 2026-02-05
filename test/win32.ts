@@ -1,8 +1,8 @@
-import {dirname} from 'path'
+import { dirname } from 'path'
 import t from 'tap'
-import { isexe, sync } from '../dist/cjs/win32.js'
+import { isexe, sync } from '../dist/esm/win32.js'
 
-import { createFixtures } from './fixtures/index'
+import { createFixtures } from './fixtures/index.js'
 const { meow, fail, mine, ours, enoent } = createFixtures(t)
 
 const { PATHEXT } = process.env

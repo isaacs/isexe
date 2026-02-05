@@ -5,9 +5,9 @@
  * @module
  */
 
-import { Stats, statSync } from 'fs'
-import { stat } from 'fs/promises'
-import { IsexeOptions } from './options'
+import { Stats, statSync } from 'node:fs'
+import { stat } from 'node:fs/promises'
+import { IsexeOptions } from './options.js'
 
 /**
  * Determine whether a path is executable based on the file extension
@@ -15,7 +15,7 @@ import { IsexeOptions } from './options'
  */
 export const isexe = async (
   path: string,
-  options: IsexeOptions = {}
+  options: IsexeOptions = {},
 ): Promise<boolean> => {
   const { ignoreErrors = false } = options
   try {
@@ -33,7 +33,7 @@ export const isexe = async (
  */
 export const sync = (
   path: string,
-  options: IsexeOptions = {}
+  options: IsexeOptions = {},
 ): boolean => {
   const { ignoreErrors = false } = options
   try {
@@ -52,8 +52,8 @@ const checkPathExt = (path: string, options: IsexeOptions) => {
     return true
   }
 
-  for (let i = 0; i < peSplit.length; i++) {
-    const p = peSplit[i].toLowerCase()
+  for (const pes of peSplit) {
+    const p = pes.toLowerCase()
     const ext = path.substring(path.length - p.length).toLowerCase()
 
     if (p && ext === p) {
