@@ -1,6 +1,6 @@
 import { dirname } from 'path'
 import t from 'tap'
-import { isexe, sync } from '../dist/esm/win32.js'
+import { isexe, sync } from '../src/win32.js'
 
 import { createFixtures } from './fixtures/index.js'
 const { meow, fail, mine, ours, enoent } = createFixtures(t)

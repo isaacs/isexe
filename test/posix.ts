@@ -29,8 +29,8 @@ Object.assign(process, {
 })
 
 const { isexe, sync } = await t.mockImport<
-  typeof import('../dist/esm/posix.js')
->('../dist/esm/posix.js', {
+  typeof import('../src/posix.js')
+>('../src/posix.js', {
   fs: {
     ...fs,
     statSync: (path: string) => mockStat(path, fs.statSync(path)),

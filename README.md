@@ -8,6 +8,9 @@ Windows.
 ## USAGE
 
 ```js
+// default export is a minified version that doesn't need to
+// load more than one file. Load the 'isexe/raw' export if
+// you want the non-minified version for some reason.
 import { isexe, sync } from 'isexe'
 // or require() works too
 // const { isexe } = require('isexe')

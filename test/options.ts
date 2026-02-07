@@ -1,7 +1,7 @@
 import t from 'tap'
 t.pass('just a type test')
 
-import { IsexeOptions } from '../dist/cjs/options.js'
+import { IsexeOptions } from '../src/options.js'
 
 const opts: IsexeOptions[] = [
   { ignoreErrors: true },
@@ -17,3 +17,4 @@ const opts: IsexeOptions[] = [
   //@ts-expect-error
   { gid: true },
 ]
+opts

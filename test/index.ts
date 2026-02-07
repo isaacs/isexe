@@ -1,6 +1,6 @@
 import t from 'tap'
 
-import { isexe, posix, sync, win32 } from '../dist/esm/index.js'
+import { isexe, posix, sync, win32 } from '../src/index.js'
 
 const defPlatform = process.platform === 'win32' ? win32 : posix
 
@@ -16,8 +16,8 @@ t.test('get the default for the other platform', async t => {
   t.teardown(() => {
     delete process.env._ISEXE_TEST_PLATFORM_
   })
-  const fake = await t.mockImport<typeof import('../dist/esm/index.js')>(
-    '../dist/esm/index.js',
+  const fake = await t.mockImport<typeof import('../src/index.js')>(
+    '../src/index.js',
     {},
   )
   const other = process.platform === 'win32' ? fake.posix : fake.win32
