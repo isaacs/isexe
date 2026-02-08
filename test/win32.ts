@@ -1,4 +1,4 @@
-import { dirname } from 'path'
+import { dirname, delimiter } from 'node:path'
 import t from 'tap'
 import { isexe, sync } from '../src/win32.js'
 
@@ -10,7 +10,7 @@ t.teardown(() => {
   if (PATHEXT) process.env.PATHEXT = PATHEXT
   else delete process.env.PATHEXT
 })
-process.env.PATHEXT = '.EXE;.CAT;.CMD;.COM'
+process.env.PATHEXT = `.EXE${delimiter}.CAT${delimiter}.CMD${delimiter}.COM`
 
 t.test('basic tests', async t => {
   t.equal(await isexe(meow), true)
@@ -48,7 +48,9 @@ t.test('uid/gid no effect on windows', async t => {
 })
 
 t.test('custom pathExt option', async t => {
-  const opts = { pathExt: '.EXE;.COM;.CMD;.FALSE' }
+  const opts = {
+    pathExt: `.EXE${delimiter}.COM${delimiter}.CMD${delimiter}.FALSE`,
+  }
   t.equal(await isexe(meow, opts), false)
   t.equal(await isexe(ours, opts), false)
   t.equal(await isexe(mine, opts), false)
@@ -62,7 +64,9 @@ t.test('custom pathExt option', async t => {
 
 t.test('empty pathext entry means everything executable', async t => {
   delete process.env.PATHEXT
-  const opts = { pathExt: '.EXE;.COM;;.CMD;.ASDF' }
+  const opts = {
+    pathExt: `.EXE${delimiter}.COM${delimiter}${delimiter}.CMD${delimiter}.ASDF`,
+  }
   t.equal(await isexe(meow, opts), true)
   t.equal(await isexe(ours, opts), true)
   t.equal(await isexe(mine, opts), true)

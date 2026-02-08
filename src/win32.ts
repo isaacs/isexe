@@ -8,6 +8,7 @@
 import { Stats, statSync } from 'node:fs'
 import { stat } from 'node:fs/promises'
 import { IsexeOptions } from './options.js'
+import { delimiter } from 'node:path'
 
 /**
  * Determine whether a path is executable based on the file extension
@@ -47,7 +48,7 @@ export const sync = (
 
 const checkPathExt = (path: string, options: IsexeOptions) => {
   const { pathExt = process.env.PATHEXT || '' } = options
-  const peSplit = pathExt.split(';')
+  const peSplit = pathExt.split(delimiter)
   if (peSplit.indexOf('') !== -1) {
     return true
   }
