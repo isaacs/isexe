@@ -6,7 +6,8 @@
   "module": "./dist/esm/index.min.js",
   "types": "./dist/commonjs/index.d.ts",
   "files": [
-    "dist"
+    "dist",
+    "src"
   ],
   "tshy": {
     "selfLink": false,
