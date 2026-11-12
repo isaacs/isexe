@@ -8,7 +8,7 @@
 import { Stats, statSync } from 'node:fs'
 import { stat } from 'node:fs/promises'
 import { IsexeOptions } from './options.js'
-import { delimiter } from 'node:path'
+import { win32 } from 'node:path'
 
 /**
  * Determine whether a path is executable based on the file extension
@@ -48,7 +48,9 @@ export const sync = (
 
 const checkPathExt = (path: string, options: IsexeOptions) => {
   const { pathExt = process.env.PATHEXT || '' } = options
-  const peSplit = pathExt.split(delimiter)
+  // PATHEXT is a Windows list. The host delimiter is ":" elsewhere,
+  // which would keep ".EXE;.CMD" as a single extension.
+  const peSplit = pathExt.split(win32.delimiter)
   if (peSplit.indexOf('') !== -1) {
     return true
   }

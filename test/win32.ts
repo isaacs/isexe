@@ -1,6 +1,9 @@
-import { dirname, delimiter } from 'node:path'
+import { dirname, win32 } from 'node:path'
 import t from 'tap'
 import { isexe, sync } from '../src/win32.js'
+
+// The win32 implementation always splits PATHEXT on ';'.
+const { delimiter } = win32
 
 import { createFixtures } from './fixtures/index.js'
 const { meow, fail, mine, ours, enoent } = createFixtures(t)
@@ -97,4 +100,17 @@ t.test('empty pathext entry means everything executable', async t => {
   t.equal(sync(ours), true)
   t.equal(sync(mine), true)
   t.equal(sync(fail), true)
+})
+
+// https://github.com/isaacs/isexe/issues/43
+t.test('semicolon pathExt is split on any host', async t => {
+  const opts = { pathExt: '.CAT;.FALSE' }
+  t.equal(sync(meow, opts), true)
+  t.equal(await isexe(meow, opts), true)
+  t.equal(sync(fail, opts), true)
+  t.equal(await isexe(fail, opts), true)
+
+  const exeOnly = { pathExt: '.EXE;.CMD' }
+  t.equal(sync(meow, exeOnly), false)
+  t.equal(sync(fail, exeOnly), false)
 })
