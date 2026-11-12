@@ -76,5 +76,5 @@ import type IsexeOptions from 'isexe'
   executable", but don't raise them.
 - `uid` Number to use as the user id on posix
 - `gid` Number to use as the group id on posix
-- `pathExt` List of path extensions to use instead of `PATHEXT`
-  environment variable on Windows.
+- `pathExt` `;`-delimited list of path extensions to use instead of
+  `PATHEXT` on Windows.
