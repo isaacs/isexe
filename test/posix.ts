@@ -117,6 +117,25 @@ t.test('override uid/gid', async t => {
     t.equal(sync(mine, o), true)
     t.equal(sync(fail, o), false)
   })
+
+  t.test('only the first matching permission class applies', async t => {
+    const meowMode = modes[meow]
+    const oursMode = modes[ours]
+    t.teardown(() => {
+      modes[meow] = meowMode
+      modes[ours] = oursMode
+    })
+
+    for (const mode of [0o655, 0o610, 0o601]) {
+      modes[meow] = mode
+      t.equal(await isexe(meow), false, `async ${mode.toString(8)}`)
+      t.equal(sync(meow), false, `sync ${mode.toString(8)}`)
+    }
+
+    modes[ours] = 0o705
+    t.equal(await isexe(ours), false, 'async group without execute')
+    t.equal(sync(ours), false, 'sync group without execute')
+  })
 })
 
 t.test('getuid/getgid required', async t => {

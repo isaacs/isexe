@@ -65,12 +65,9 @@ const checkMode = (stat: Stats, options: IsexeOptions) => {
   const u = parseInt('100', 8)
   const g = parseInt('010', 8)
   const o = parseInt('001', 8)
-  const ug = u | g
 
-  return !!(
-    mod & o ||
-    (mod & g && groups.has(gid)) ||
-    (mod & u && uid === myUid) ||
-    (mod & ug && myUid === 0)
-  )
+  if (myUid === 0) return !!(mod & (u | g | o))
+  if (uid === myUid) return !!(mod & u)
+  if (groups.has(gid)) return !!(mod & g)
+  return !!(mod & o)
 }
